@@ -1,4 +1,4 @@
-from classifier import Classifier
+from .classifier import Classifier
 from pandas import DataFrame
 import numpy as np
 import math
@@ -160,16 +160,16 @@ class KMeans(Classifier):
 
         return means
     
-def ndarray_to_dataframe(ndarray):
-    if (type(ndarray) == list):
-        data_list = ndarray
-    elif (type(ndarray) == np.ndarray):
-        data_list = ndarray.tolist()
-    else:
-        raise TypeError("ndarray type = 'list' or 'numpy.ndarray' expected, found %s" % type(ndarray))
-    col_data = [[ndarray[j][i] for j in range(0, len(ndarray))] for i in range(0, len(ndarray[0]))]
-    dataframe = DataFrame({i:col_data[i] for i in range(0, len(ndarray[0]))})
-    return dataframe
+    def ndarray_to_dataframe(self, ndarray):
+        if (type(ndarray) == list):
+            data_list = ndarray
+        elif (type(ndarray) == np.ndarray):
+            data_list = ndarray.tolist()
+        else:
+            raise TypeError("ndarray type = 'list' or 'numpy.ndarray' expected, found %s" % type(ndarray))
+        col_data = [[ndarray[j][i] for j in range(0, len(ndarray))] for i in range(0, len(ndarray[0]))]
+        dataframe = DataFrame({i:col_data[i] for i in range(0, len(ndarray[0]))})
+        return dataframe
 
 '''
 TEST DRIVE
