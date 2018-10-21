@@ -36,24 +36,35 @@ class Agglomerative(Classifier):
         self.__createAdjMatrix(self.__data)
         for i in range(self.__n_elmt-self.n_cluster):
             # Select the smallest distance index
-            min_idx = np.argmin(self.adj_matrix)
+            min_idx = np.argmin(self.dist_matrix)
             min_row, min_col = self.__idxToRowCol(min_idx, n_row, n_row)
-            print(self.adj_matrix)
             
             # Generate new distance matrix
             combined_node = self.__generateNode(min_row, min_col)
             self.__removeNode(min_row, min_col)
             self.__mergeNode(combined_node)
-            
-        print(self.adj_matrix_tracker)
 
-    def fit_predict(self):
-        pass
+    def predict(self):       
+        flatten_cluster = self.__flattenCluster()
+
+        result_array = np.array([-1 for n in range(self.__n_elmt)])
+        for cluster in range(len(flatten_cluster)):
+            for i in flatten_cluster[cluster]:
+                result_array[i] = cluster
+
+        return result_array
+
+    def fit_predict(self, X : DataFrame):
+        self.fit(x)
+        return self.predict() 
+
+    def __flattenCluster(self):
+        return [self.__flatten(f) for f in self.cluster_tree]
 
     def __generateNode(self, a, b):
         if(self.link_type == "single"):
-            row_a = self.adj_matrix[a,]
-            row_b = self.adj_matrix[b,]
+            row_a = self.dist_matrix[a,]
+            row_b = self.dist_matrix[b,]
             new_row = np.minimum(row_a, row_b)
             new_row = np.delete(new_row, a)
             # Handle row shift
@@ -63,8 +74,8 @@ class Agglomerative(Classifier):
                 new_row = np.delete(new_row, b)
             new_row = np.append(new_row, float('inf'))
         elif(self.link_type == "complete"):
-            row_a = self.adj_matrix[a,]
-            row_b = self.adj_matrix[b,]
+            row_a = self.dist_matrix[a,]
+            row_b = self.dist_matrix[b,]
             new_row = np.maximum(row_a, row_b)
             new_row = np.delete(new_row, a)
             # Handle row shift
@@ -75,12 +86,12 @@ class Agglomerative(Classifier):
             new_row = np.append(new_row, float('inf'))
         elif(self.link_type == "average"):
             # Get list of element for cluster and non cluster
-            cluster_el = [self.adj_matrix_tracker[a], self.adj_matrix_tracker[b]]
+            cluster_el = [self.cluster_tree[a], self.cluster_tree[b]]
             opposite_cluster = []
             
-            for idx in range(len(self.adj_matrix_tracker)):
+            for idx in range(len(self.cluster_tree)):
                 if(idx != a and idx != b):
-                    opposite_cluster.append(self.adj_matrix_tracker[idx])
+                    opposite_cluster.append(self.cluster_tree[idx])
             
             cluster_el = self.__flatten(cluster_el)
 
@@ -91,7 +102,7 @@ class Agglomerative(Classifier):
                 for op_el in flat_op_elmt:
                     sum_dist = 0
                     for el in cluster_el:
-                        sum_dist += self.adj_matrix_orig[el,op_el]
+                        sum_dist += self.dist_matrix_orig[el,op_el]
                         
                 new_row = np.append(new_row, [sum_dist/len(cluster_el)])
             new_row = np.append(new_row, float('inf'))
@@ -99,12 +110,12 @@ class Agglomerative(Classifier):
         elif(self.link_type == "average-group"):
             # Get list of element for cluster and non cluster
              # Get list of element for cluster and non cluster
-            cluster_el = [self.adj_matrix_tracker[a], self.adj_matrix_tracker[b]]
+            cluster_el = [self.cluster_tree[a], self.cluster_tree[b]]
             opposite_cluster = []
             
-            for idx in range(len(self.adj_matrix_tracker)):
+            for idx in range(len(self.cluster_tree)):
                 if(idx != a and idx != b):
-                    opposite_cluster.append(self.adj_matrix_tracker[idx])
+                    opposite_cluster.append(self.cluster_tree[idx])
             
             cluster_el = self.__flatten(cluster_el)
             # Get cluster center
@@ -121,43 +132,43 @@ class Agglomerative(Classifier):
         return new_row
 
     def __removeNode(self, a, b):
-        a_val = self.adj_matrix_tracker.pop(a)
-        self.adj_matrix = np.delete(self.adj_matrix,a,0)
-        self.adj_matrix = np.delete(self.adj_matrix,a,1)
+        a_val = self.cluster_tree.pop(a)
+        self.dist_matrix = np.delete(self.dist_matrix,a,0)
+        self.dist_matrix = np.delete(self.dist_matrix,a,1)
         if(a<b):
-            self.adj_matrix = np.delete(self.adj_matrix,b-1,0)
-            self.adj_matrix = np.delete(self.adj_matrix,b-1,1)
-            b_val = self.adj_matrix_tracker.pop(b-1)
+            self.dist_matrix = np.delete(self.dist_matrix,b-1,0)
+            self.dist_matrix = np.delete(self.dist_matrix,b-1,1)
+            b_val = self.cluster_tree.pop(b-1)
         else:
-            self.adj_matrix = np.delete(self.adj_matrix,b,0)
-            self.adj_matrix = np.delete(self.adj_matrix,b,1)
-            b_val = self.adj_matrix_tracker.pop(b)
-        self.adj_matrix_tracker.append([a_val,b_val])
+            self.dist_matrix = np.delete(self.dist_matrix,b,0)
+            self.dist_matrix = np.delete(self.dist_matrix,b,1)
+            b_val = self.cluster_tree.pop(b)
+        self.cluster_tree.append([a_val,b_val])
 
     def __mergeNode(self, node):
-        n_row, n_col = self.adj_matrix.shape        
+        n_row, n_col = self.dist_matrix.shape        
         
         b = np.zeros((n_row+1, n_col+1))
-        b[:-1,:-1] = self.adj_matrix
-        self.adj_matrix = b
+        b[:-1,:-1] = self.dist_matrix
+        self.dist_matrix = b
 
         for i in range(n_row+1):
-            self.adj_matrix[i,n_col] = node[i]
-            self.adj_matrix[n_col,i] = node[i]
+            self.dist_matrix[i,n_col] = node[i]
+            self.dist_matrix[n_col,i] = node[i]
 
     def __createAdjMatrix(self, X : DataFrame):
-        self.adj_matrix = np.ndarray(shape=(self.__n_elmt, self.__n_elmt))
-        self.adj_matrix_tracker = [n for n in range(self.__n_elmt)]
+        self.dist_matrix = np.ndarray(shape=(self.__n_elmt, self.__n_elmt))
+        self.cluster_tree = [n for n in range(self.__n_elmt)]
         for index, row in X.iterrows():
             for index_2, row_2 in X.iterrows():
                 if(index_2 == index):
                     distance = float('inf')
                 else:
                     distance = math.fabs(row_2.subtract(row,fill_value=0).abs().sum())
-                self.adj_matrix.itemset((index, index_2), distance)
+                self.dist_matrix.itemset((index, index_2), distance)
         
         # Create copy for average - averagegroup
-        self.adj_matrix_orig = self.adj_matrix.copy()
+        self.dist_matrix_orig = self.dist_matrix.copy()
 
     def __idxToRowCol(self, idx, n_row, n_col):
         return (int(idx/n_row),idx%n_col)
@@ -169,12 +180,15 @@ class Agglomerative(Classifier):
             return [x]
 '''
 TEST DRIVE
-'''
 def test():
     d = DataFrame(data=[[9,5,3],[2,3,3],[3,4,3],[3,4,-2],[-4,-5,-5],[-2,-1,-2]])
     c = Agglomerative(n_cluster=3, link="average-group")
     c.fit(d)
-    # print(c.adj_matrix)
-    # print(np.argmin(c.adj_matrix))
+    print(c.predict())
+    print(c.cluster_tree)
+    # print(c.dist_matrix)
+    # print(np.argmin(c.dist_matrix))
 
 test()
+
+'''
