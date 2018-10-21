@@ -68,10 +68,8 @@ class KMedoids(Classifier):
         # return self.assign_labels(distances)
 
     def fit_predict(self, X):
-        pass
-        # y = 0 # dummy ... may be deleted soon (?)
-        # self.fit(X, y)
-        # return self.labels
+        self.fit(X)
+        return self.labels
     
     def k_medoids(self, initial_medoids, data):
         medoids = initial_medoids
