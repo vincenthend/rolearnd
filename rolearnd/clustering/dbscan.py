@@ -8,7 +8,25 @@ from sklearn import datasets
 class DBSCAN(Classifier):
     '''
     DBSCAN class for clustering
-    Link Types available = ["single", "complete", "average", "average-group"]
+
+    Parameters
+    ----------
+
+    eps : float, minimal neighbor distance
+    min_pts: int, minimal neighbors within eps distance, including itself
+    distance: {"euclidean", "manhattan"}, distance measuring algorithm
+
+    Attributes
+    ----------
+    eps : float, minimal neighbor distance
+    min_pts: int, minimal neighbors within eps distance, including itself
+    distance: {"euclidean", "manhattan"}, distance measuring algorithm
+    __data: DataFrame, data to cluster
+    __n_elmt: int, number of data
+    distance_matrix: ndarray, distance matrix
+    labels : int, labels of each instance
+
+
     '''
 
     def __init__(self, eps=0.5, min_pts=5, distance="euclidean", **kwargs):
@@ -85,10 +103,6 @@ class DBSCAN(Classifier):
         for i in range (self.__n_elmt):
             if (self.labels[i] in old_labels):
                 self.labels[i] = new_label
-
-    def count_purity(self):
-
-
 
 '''
 TEST DRIVE
