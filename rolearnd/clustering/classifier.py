@@ -6,7 +6,7 @@ class Classifier():
     def __init__(self, **kwargs):
         pass
 
-    def fit(self, X : DataFrame, y : DataFrame):
+    def fit(self, X : DataFrame):
         pass
 
     def predict(self, X):
