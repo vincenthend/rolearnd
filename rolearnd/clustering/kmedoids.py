@@ -17,6 +17,9 @@ class KMedoids(Classifier):
     init : {'random', 'np.ndarray or list(user defined)'}
            initial medoids
     max_iteration : maximum iteration limit
+    swap_medoid : {'optimized', 'random'}
+                  swap medoid method, optimized = search for the minimum possible swap, 
+                  random = random swap
 
     Attributes
     ----------
