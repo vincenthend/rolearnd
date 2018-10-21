@@ -123,9 +123,9 @@ class Agglomerative(Classifier):
             new_row = np.array([])            
             # Count distance between cluster center and other cluster center
             for opposite_cluster_el in opposite_cluster:
-                flat_op_elmt = self.__flatten(oppocluster_el)
-                op_cluster_center = self.__data.ilat_op_elmt].mean()
-                dist = math.fabs(op_cluster_centerract(cluster_center,fill_value=0).abs().sum())
+                flat_op_elmt = self.__flatten(opposite_cluster_el)
+                op_cluster_center = self.__data.iloc[flat_op_elmt].mean()
+                dist = math.fabs(op_cluster_center.subtract(cluster_center,fill_value=0).abs().sum()) 
                 new_row = np.append(new_row, dist)
             new_row = np.append(new_row, float('inf'))
         return new_row
@@ -166,7 +166,7 @@ class Agglomerative(Classifier):
                     if(self.distance == "manhattan"):
                         distance = math.fabs(row_2.subtract(row,fill_value=0).abs().sum())
                     elif(self.distance=="euclidean"):
-                        distance = row_2.subtract(row,fill_value=0).pow(2).sum(1).pow(0.5)
+                        distance = (row_2.subtract(row,fill_value=0).pow(2).sum()) ** 0.5
                 self.dist_matrix.itemset((index, index_2), distance)
         
         # Create copy for average - averagegroup
@@ -182,15 +182,15 @@ class Agglomerative(Classifier):
             return [x]
 '''
 TEST DRIVE
+'''
+'''
 def test():
     d = DataFrame(data=[[9,5,3],[2,3,3],[3,4,3],[3,4,-2],[-4,-5,-5],[-2,-1,-2]])
-    c = Agglomerative(n_cluster=3, link="average-group")
+    c = Agglomerative(n_cluster=3, link="average-group", distance="euclidean")
     c.fit(d)
+    print(c.dist_matrix)
     print(c.predict())
     print(c.cluster_tree)
-    # print(c.dist_matrix)
-    # print(np.argmin(c.dist_matrix))
 
 test()
-
 '''
