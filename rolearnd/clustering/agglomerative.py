@@ -8,8 +8,27 @@ class Agglomerative(Classifier):
     '''
     Agglomerative Clustering class for clustering
 
-    Link Types available = ["single", "complete", "average", "average-group"]
+    Parameters
+    ----------
+    link = ["single", "complete", "average", "average-group"]
+        Link type for distance between cluster
+    distance = ["manhattan", "euclidean"]
+        Distance for distance matrix
 
+    Examples
+    --------
+    
+    Fit and predict in separate process
+    >>> classifier = Agglomerative()
+    >>> classifier.fit(X)
+    >>> classifier.predict()
+
+    Using fit_predict
+    >>> class
+    >>> classifier = Agglomerative()
+    >>> classifier.fit_predict(X)
+    
+    Take note that X is a dataframe
     '''
     
     def __init__(self, link="single", n_cluster=2, distance="manhattan", **kwargs):
@@ -33,7 +52,7 @@ class Agglomerative(Classifier):
         n_row, n_col = X.shape
         self.__n_elmt = n_row
         
-        self.__createAdjMatrix(self.__data)
+        self.__createDistMatrix(self.__data)
         for i in range(self.__n_elmt-self.n_cluster):
             # Select the smallest distance index
             min_idx = np.argmin(self.dist_matrix)
@@ -155,7 +174,7 @@ class Agglomerative(Classifier):
             self.dist_matrix[i,n_col] = node[i]
             self.dist_matrix[n_col,i] = node[i]
 
-    def __createAdjMatrix(self, X : DataFrame):
+    def __createDistMatrix(self, X : DataFrame):
         self.dist_matrix = np.ndarray(shape=(self.__n_elmt, self.__n_elmt))
         self.cluster_tree = [n for n in range(self.__n_elmt)]
         for index, row in X.iterrows():
