@@ -2,7 +2,7 @@ from pandas import DataFrame, Series
 import numpy as np
 import math
 import collections
-from classifier import Classifier
+from .classifier import Classifier
 
 class Agglomerative(Classifier):
     '''
@@ -74,7 +74,7 @@ class Agglomerative(Classifier):
         return result_array
 
     def fit_predict(self, X : DataFrame):
-        self.fit(x)
+        self.fit(X)
         return self.predict() 
 
     def __flattenCluster(self):

@@ -1,7 +1,7 @@
 from pandas import DataFrame
 import numpy as np
 import math
-from classifier import Classifier
+from .classifier import Classifier
 import pandas as pd
 from sklearn import datasets
 
