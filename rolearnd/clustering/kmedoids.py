@@ -77,12 +77,11 @@ class KMedoids(Classifier):
         medoids = initial_medoids
         iteration = 0
         while (iteration < self.max_iteration):
-            print(medoids)
+            # print(medoids)
             distances = self.count_distances(medoids, data)
-            # print(means)
             labels = self.assign_labels(distances)
-            # print(labels)
             error = self.calculate_error(distances)
+            # print(error)
             
             new_distances = []
             new_medoids = []
@@ -115,6 +114,7 @@ class KMedoids(Classifier):
                 print(error, min_error)
                 if(min_error - error < 0):
                     medoids[medoid_to_swap] = min_swap_idx
+                    # print(self.calculate_error(self.count_distances(medoids, data)))
                 else:
                     break
             elif (self.swap_medoid == 'random'):
@@ -143,11 +143,9 @@ class KMedoids(Classifier):
     def count_distances(self, medoids, data):
         num_of_instances = data.shape[0]
         distances = [[-1 for j in range(0, len(medoids))] for i in range(0, num_of_instances)]
-        #distances = [[-1 for j in range(0, num_of_instances)] for i in range(0, len(means))]
         
         for instance_idx in range(0, num_of_instances):
             instance_data = [x for x in data.iloc[instance_idx]]
-            # print(instance_data)
             for medoid_idx in range(0, len(medoids)):
                 medoid_instance = [x for x in data.iloc[medoids[medoid_idx]]]
                 distances[instance_idx][medoid_idx] = self.calculate_absolute_dist(medoid_instance, instance_data)
