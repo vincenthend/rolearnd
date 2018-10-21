@@ -41,13 +41,13 @@ class KMeans(Classifier):
                 "num_of_instances = %d must be larger than num_clusters = %d" % (num_of_instances, self.num_clusters))
         else:
             if (self.num_clusters == 1):
-                self.labels = [0 for i in range(0, len(num_of_instances))]
+                self.labels = [0 for i in range(0, num_of_instances)]
                 self.means = self.update_means(labels, X)
             else:
                 init_type = type(self.init)
                 if (init_type == str):
                     if (self.init == 'random'):
-                        means = [X.iloc[random.randrange(0,150)] for i in range(0, self.num_clusters)]
+                        means = [X.iloc[random.randrange(0, num_of_instances)] for i in range(0, self.num_clusters)]
                         self.k_means(means, X)
                     else:
                         raise ValueError("Init type 'random' or ndarray expected, found %s" % (self.init))
@@ -172,7 +172,7 @@ def ndarray_to_dataframe(ndarray):
 
 '''
 TEST DRIVE
-
+'''
 def test():
     y = 0
     iris = datasets.load_iris()
@@ -188,4 +188,4 @@ def test():
     print(kmeans.means)
 
 test()
-'''
+#'''
