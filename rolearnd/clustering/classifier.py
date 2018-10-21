@@ -9,8 +9,8 @@ class Classifier():
     def fit(self, X : DataFrame):
         pass
 
-    def predict(self, X):
+    def predict(self, X : DataFrame):
         pass
 
-    def fit_predict(self):
+    def fit_predict(self, X : DataFrame):
         pass
