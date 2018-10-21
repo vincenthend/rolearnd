@@ -3,6 +3,7 @@ from pandas import DataFrame
 import numpy as np
 import math
 import random
+import sys
 
 # for test
 from sklearn import datasets
@@ -103,7 +104,7 @@ class KMedoids(Classifier):
                         new_error = self.calculate_error(new_distances)
                         swap_errors[swap_candidate_idxs[j]] = [i, new_error]
                 
-                min_error = 99999999
+                min_error = sys.maxsize
                 min_swap_idx = -1
                 medoid_to_swap = -1
                 for i in range(0, len(swap_errors)):
@@ -183,7 +184,7 @@ class KMedoids(Classifier):
 
     def min_val(self, list_elements):
         index = -1
-        value = 9999999
+        value = sys.maxsize
         for i in range(0, len(list_elements)):
             if (list_elements[i] < value):
                 index = i

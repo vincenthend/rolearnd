@@ -3,6 +3,7 @@ from pandas import DataFrame
 import numpy as np
 import math
 import random
+import sys
 
 # for test
 from sklearn import datasets
@@ -132,7 +133,7 @@ class KMeans(Classifier):
         
     def min_val(self, list_elements):
         index = -1
-        value = 9999999
+        value = sys.maxsize
         for i in range(0, len(list_elements)):
             if (list_elements[i] < value):
                 index = i
