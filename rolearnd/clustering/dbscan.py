@@ -3,7 +3,7 @@ import numpy as np
 import math
 from classifier import Classifier
 import pandas as pd
-
+from sklearn import datasets
 
 class DBSCAN(Classifier):
     '''
@@ -38,6 +38,7 @@ class DBSCAN(Classifier):
                 if (i != j):
                     if (self.distance_matrix[i, j] <= self.eps):
                         n_neighbor += 1
+                        # Check for density reachable data's label
                         if ((self.labels[j] != -1) and not(self.labels[j] in neighbor_labels)):
                             neighbor_labels.append(self.labels[j])
 
@@ -46,7 +47,7 @@ class DBSCAN(Classifier):
                 # Initiate label for current data
                 if (neighbor_labels):
                     self.labels[i] = min(neighbor_labels)
-                    # Change density reachable data's label
+                    # Change density reachable data's label to match this data's label
                     self.__replace_label(neighbor_labels, self.labels[i])
                 else:
                     self.labels[i] = self.__generate_new_label()
@@ -85,25 +86,18 @@ class DBSCAN(Classifier):
             if (self.labels[i] in old_labels):
                 self.labels[i] = new_label
 
+    def count_purity(self):
+
+
 
 '''
 TEST DRIVE
 def test():
-    df = pd.read_csv('test.csv')
+    df = pd.DataFrame(datasets.load_iris().data)
     print ("Testing with euclidean distance...")
     print ("Data: ")
     print (df)
-    clustering = DBSCAN(1, 2, "euclidean")
-    prediction = clustering.fit_predict(df)
-    print ("Distance Matrix: ")
-    print (clustering.distance_matrix)
-    print (prediction)
-
-
-    print ("Testing with manhattan distance...")
-    print ("Data: ")
-    print (df)
-    clustering = DBSCAN(1, 2, "manhattan")
+    clustering = DBSCAN(0.8, 2, "euclidean")
     prediction = clustering.fit_predict(df)
     print ("Distance Matrix: ")
     print (clustering.distance_matrix)
