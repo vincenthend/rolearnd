@@ -34,9 +34,7 @@ class KMedoids(Classifier):
         self.swap_medoid = swap_medoid
 
     def fit(self, X : DataFrame):
-        pass
-        # '''
-        # '''
+        self.train_data = X
         num_of_instances = X.shape[0]
         
         if self.num_clusters > num_of_instances:
@@ -63,7 +61,6 @@ class KMedoids(Classifier):
                             "number of initial means = %d must be equal to num_clusters = %d" % (len(self.init), self.num_clusters))
 
     def predict(self, X):
-        print(self.medoids)
         distances = self.count_distances(self.medoids, X)
         return self.assign_labels(distances)
 
@@ -110,10 +107,10 @@ class KMedoids(Classifier):
                         min_error = swap_errors[i][1]
                         min_swap_idx = i
                         medoid_to_swap = swap_errors[i][0]
-                print(error, min_error)
+                # print(error, min_error)
                 if(min_error - error < 0):
                     medoids[medoid_to_swap] = min_swap_idx
-                    print(self.calculate_error(self.count_distances(medoids, data)))
+                    # print(self.calculate_error(self.count_distances(medoids, data)))
                 else:
                     break
             elif (self.swap_medoid == 'random'):
@@ -146,7 +143,7 @@ class KMedoids(Classifier):
         for instance_idx in range(0, num_of_instances):
             instance_data = [x for x in data.iloc[instance_idx]]
             for medoid_idx in range(0, len(medoids)):
-                medoid_instance = [x for x in data.iloc[medoids[medoid_idx]]]
+                medoid_instance = [x for x in self.train_data.iloc[medoids[medoid_idx]]]
                 distances[instance_idx][medoid_idx] = self.calculate_absolute_dist(medoid_instance, instance_data)
         
         return distances
@@ -200,19 +197,24 @@ def ndarray_to_dataframe(ndarray):
     dataframe = DataFrame({i:col_data[i] for i in range(0, len(ndarray[0]))})
     return dataframe
 
+'''
+TEST DRIVE
+
 def test():
     y = 0
     iris = datasets.load_iris()
     kmedoids = KMedoids(num_clusters=3, init='random')
+    # kmedoids = KMedoids(num_clusters=3, init='random', swap_medoid='random')
     test_data = np.array([[5.8,  3.1 ,  6.1,  0.4], [0.8,  1.1 ,  2.1,  0.1]])
     # test_data = [[5.8,  3.1 ,  6.1,  0.4], [0.8,  1.1 ,  2.1,  0.1]]
     # kmeans = KMeans(num_clusters=3, init=[[5.1, 3.5, 1.4, 0.2], [5.0, 2.0, 3.5, 1.0], [5.9, 3.0, 5.1, 1.8]])
     dataframe_iris = ndarray_to_dataframe(iris['data'])
     kmedoids.fit(dataframe_iris)
     print('finish fit')
-    print(kmedoids.labels)
+    # print(kmedoids.labels)
     print(kmedoids.medoids)
-    # prediction = kmedoids.predict(ndarray_to_dataframe(test_data))
-    # print(prediction)
+    prediction = kmedoids.predict(ndarray_to_dataframe(test_data))
+    print(prediction)
 
 test()
+'''
