@@ -63,9 +63,9 @@ class KMedoids(Classifier):
                             "number of initial means = %d must be equal to num_clusters = %d" % (len(self.init), self.num_clusters))
 
     def predict(self, X):
-        pass
-        # distances = self.count_distances(self.means, X)
-        # return self.assign_labels(distances)
+        print(self.medoids)
+        distances = self.count_distances(self.medoids, X)
+        return self.assign_labels(distances)
 
     def fit_predict(self, X):
         self.fit(X)
@@ -95,7 +95,8 @@ class KMedoids(Classifier):
                             swap_candidate_idxs.append(j)
                     
                     for j in range(0, len(swap_candidate_idxs)):
-                        new_medoids = medoids
+                        new_medoids = []
+                        new_medoids = [x for x in medoids]
                         new_medoids[i] = swap_candidate_idxs[j]
                         new_distances = self.count_distances(new_medoids, data)
                         new_error = self.calculate_error(new_distances)
@@ -112,7 +113,7 @@ class KMedoids(Classifier):
                 print(error, min_error)
                 if(min_error - error < 0):
                     medoids[medoid_to_swap] = min_swap_idx
-                    # print(self.calculate_error(self.count_distances(medoids, data)))
+                    print(self.calculate_error(self.count_distances(medoids, data)))
                 else:
                     break
             elif (self.swap_medoid == 'random'):
@@ -208,10 +209,10 @@ def test():
     # kmeans = KMeans(num_clusters=3, init=[[5.1, 3.5, 1.4, 0.2], [5.0, 2.0, 3.5, 1.0], [5.9, 3.0, 5.1, 1.8]])
     dataframe_iris = ndarray_to_dataframe(iris['data'])
     kmedoids.fit(dataframe_iris)
+    print('finish fit')
     print(kmedoids.labels)
     print(kmedoids.medoids)
-    # prediction = kmeans.predict(ndarray_to_dataframe(test_data))
+    # prediction = kmedoids.predict(ndarray_to_dataframe(test_data))
     # print(prediction)
-    # print(kmeans.means)
 
 test()
