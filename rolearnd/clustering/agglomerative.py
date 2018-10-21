@@ -62,11 +62,13 @@ class Agglomerative(Classifier):
             combined_node = self.__generateNode(min_row, min_col)
             self.__removeNode(min_row, min_col)
             self.__mergeNode(combined_node)
+            n_row, n_col = self.dist_matrix.shape
 
     def predict(self):       
         flatten_cluster = self.__flattenCluster()
 
         result_array = np.array([-1 for n in range(self.__n_elmt)])
+        
         for cluster in range(len(flatten_cluster)):
             for i in flatten_cluster[cluster]:
                 result_array[i] = cluster
@@ -203,9 +205,10 @@ class Agglomerative(Classifier):
 TEST DRIVE
 '''
 '''
+from sklearn import datasets
 def test():
-    d = DataFrame(data=[[9,5,3],[2,3,3],[3,4,3],[3,4,-2],[-4,-5,-5],[-2,-1,-2]])
-    c = Agglomerative(n_cluster=3, link="average-group", distance="euclidean")
+    d = DataFrame(datasets.load_iris().data)
+    c = Agglomerative(n_cluster=3, link="single", distance="euclidean")
     c.fit(d)
     print(c.dist_matrix)
     print(c.predict())
