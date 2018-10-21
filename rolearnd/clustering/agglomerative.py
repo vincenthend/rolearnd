@@ -109,7 +109,6 @@ class Agglomerative(Classifier):
 
         elif(self.link_type == "average-group"):
             # Get list of element for cluster and non cluster
-             # Get list of element for cluster and non cluster
             cluster_el = [self.cluster_tree[a], self.cluster_tree[b]]
             opposite_cluster = []
             
